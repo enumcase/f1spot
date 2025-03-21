@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Inter font for clean, modern look */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Minimalist color palette */
+  --color-primary: 244, 63, 94; /* Rose 500 */
+  --color-secondary: 100, 116, 139; /* Slate 500 */
+  --color-dark: 15, 23, 42; /* Slate 900 */
+  --color-light: 248, 250, 252; /* Slate 50 */
+  --color-accent: 234, 88, 12; /* Orange 600 */
+
+  /* Light mode */
+  --foreground-rgb: var(--color-dark);
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: var(--color-light);
+  
+  /* Fluid typography variables */
+  --font-size-sm: clamp(0.8rem, 0.17vw + 0.76rem, 0.89rem);
+  --font-size-base: clamp(1rem, 0.34vw + 0.91rem, 1.19rem);
+  --font-size-md: clamp(1.25rem, 0.61vw + 1.1rem, 1.58rem);
+  --font-size-lg: clamp(1.56rem, 1vw + 1.31rem, 2.11rem);
+  --font-size-xl: clamp(1.95rem, 1.56vw + 1.56rem, 2.81rem);
+  --font-size-xxl: clamp(2.44rem, 2.38vw + 1.85rem, 3.75rem);
+  --font-size-xxxl: clamp(3.05rem, 3.54vw + 2.17rem, 5rem);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode */
+    --foreground-rgb: var(--color-light);
+    --background-start-rgb: 2, 6, 23; /* Slate 950 */
+    --background-end-rgb: 15, 23, 42; /* Slate 900 */
+  }
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+  font-size: 16px; /* Base font size */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+/* Responsive font sizes */
+@media screen and (min-width: 768px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+/* Typography adjustments */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+/* Subtle animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Fluid typography utility classes */
+.text-fluid-sm {
+  font-size: var(--font-size-sm);
+}
+
+.text-fluid-base {
+  font-size: var(--font-size-base);
+}
+
+.text-fluid-md {
+  font-size: var(--font-size-md);
+}
+
+.text-fluid-lg {
+  font-size: var(--font-size-lg);
+}
+
+.text-fluid-xl {
+  font-size: var(--font-size-xl);
+}
+
+.text-fluid-xxl {
+  font-size: var(--font-size-xxl);
+}
+
+/* Improved transitions for better UX */
+.transition-standard {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced focus states for better accessibility */
+.focus-ring {
+  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-opacity-75 rounded;
+}
+
+/* Card hover effect */
+.card-hover {
+  @apply transition-standard hover:translate-y-[-2px] hover:shadow-md;
+}
+
+/* Smooth rendering for images and UI elements */
+img, video {
+  image-rendering: -webkit-optimize-contrast;
+  transform: translateZ(0);
+}
+
+/* Better anti-aliasing for rounded elements */
+.rounded-lg, .rounded-xl, .rounded-2xl, .rounded-full {
+  mask-image: linear-gradient(black, black);
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Smooth edges for gradient overlays */
+.bg-gradient-to-t, 
+.bg-gradient-to-b, 
+.bg-gradient-to-l, 
+.bg-gradient-to-r,
+.bg-gradient-to-tr, 
+.bg-gradient-to-tl, 
+.bg-gradient-to-br, 
+.bg-gradient-to-bl {
+  transform: translateZ(0);
+  will-change: transform;
+} 
