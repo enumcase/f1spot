@@ -15,10 +15,6 @@ Before you begin, ensure you have the following installed on your system:
   - Download and install from [nodejs.org](https://nodejs.org/)
   - Verify installation with `node -v` and `npm -v`
 
-- **Git** (optional, for cloning the repository)
-  - Download and install from [git-scm.com](https://git-scm.com/)
-  - Verify installation with `git --version`
-
 ## Development Setup
 
 1. **Clone the repository** (or download the ZIP file)
