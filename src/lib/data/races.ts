@@ -116,4 +116,3 @@ const pastRaces = races.filter(race => race.isPast);
 // Helper functions to get races data
 export const getUpcomingRaces = (): Race[] => [...upcomingRaces];
 export const getPastRaces = (): Race[] => [...pastRaces];
-export const getNextRace = (): Race | undefined => upcomingRaces.length > 0 ? upcomingRaces[0] : undefined; 
