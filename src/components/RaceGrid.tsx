@@ -24,12 +24,45 @@ export default function RaceGrid({ title, races, showFeatured = false }: RaceGri
     };
   }, [races, showFeatured]);
   
-  // Memoize the race lists to maintain referential equality
-  const regularRaceList = useMemo(() => {
-    return regularRaces.map((race) => (
-      <RaceCard key={race.id} race={race} />
-    ));
-  }, [regularRaces]);
+  // Function to compute a grid template that gives us column-first ordering
+  const getGridTemplateAreas = (itemCount: number, columns: number) => {
+    const rows = Math.ceil(itemCount / columns);
+    
+    // Create a matrix of area names
+    const areas = Array(rows).fill(0).map(() => Array(columns).fill('.'));
+    
+    // Fill in the areas with positions in column-first order
+    let count = 0;
+    for (let col = 0; col < columns; col++) {
+      for (let row = 0; row < rows; row++) {
+        if (count < itemCount) {
+          areas[row][col] = `item${count}`;
+          count++;
+        }
+      }
+    }
+    
+    // Convert to grid-template-areas format
+    return areas.map(row => `"${row.join(' ')}"`).join(' ');
+  };
+  
+  // Compute grid style for the upcoming races grid
+  const upcomingGridStyle = useMemo(() => {
+    if (!showFeatured || regularRaces.length === 0) return {};
+    
+    const columns = 3; // md:grid-cols-3
+    const templateAreas = getGridTemplateAreas(regularRaces.length, columns);
+    
+    return {
+      gridTemplateAreas: templateAreas,
+      gridTemplateColumns: 'repeat(3, minmax(0, 1fr))'
+    };
+  }, [regularRaces.length, showFeatured]);
+  
+  // Generate styles for each race card in the upcoming races grid
+  const getRaceCardStyle = (index: number) => {
+    return { gridArea: `item${index}` };
+  };
   
   const allRacesList = useMemo(() => {
     return races.map((race) => (
@@ -60,8 +93,15 @@ export default function RaceGrid({ title, races, showFeatured = false }: RaceGri
             
             {/* Grid of other upcoming races on the right */}
             <div className="md:w-3/4">
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                {regularRaceList}
+              <div 
+                className="grid gap-3 md:gap-4" 
+                style={upcomingGridStyle}
+              >
+                {regularRaces.map((race, index) => (
+                  <div key={race.id} style={getRaceCardStyle(index)}>
+                    <RaceCard race={race} />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
