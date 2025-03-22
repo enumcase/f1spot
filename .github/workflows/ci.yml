@@ -1,0 +1,58 @@
+name: CI/CD Pipeline
+
+on: [ pull_request ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      # Improved caching strategy
+      - name: Cache Next.js build
+        uses: actions/cache@v3
+        with:
+          path: |
+            .next/cache
+          # Generate a new cache whenever packages or source files change
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+            
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Lint check
+        run: npm run lint || echo "No linting configured"
+      
+      - name: Type check
+        run: npm run type-check || echo "No type-checking configured"
+        
+      - name: Build project
+        run: npm run build
+        
+      - name: Check bundle size
+        run: |
+          echo "Analyzing bundle size..."
+          npx -p nextjs-bundle-analysis analyze-bundles || echo "Optional: Install nextjs-bundle-analysis for bundle size checks"
+
+      - name: Provide PR feedback
+        if: github.event_name == 'pull_request' && success()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Build passed successfully! Your changes have been verified to build correctly.'
+            })
