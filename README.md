@@ -1,7 +1,4 @@
 # f1spot
-
-![CI/CD Pipeline](https://github.com/yourusername/f1spot/workflows/CI%2FCD%20Pipeline/badge.svg)
-
 ## Features
 
 - View upcoming and past F1 races
