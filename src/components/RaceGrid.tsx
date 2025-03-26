@@ -51,17 +51,19 @@ export default function RaceGrid({ title, races, showFeatured = false }: RaceGri
           {/* Large screens: Side by side layout */}
           <div className="hidden lg:flex lg:flex-row lg:gap-4 lg:mb-4">
             {/* Featured race (MUR) - left side */}
-            <div className="lg:w-1/3">
-              <RaceCard 
-                race={featuredRace}
-                isLarge={true}
-                isFullHeight={true}
-              />
+            <div className="lg:w-1/4">
+              <div className="h-full">
+                <RaceCard 
+                  race={featuredRace}
+                  isLarge={true}
+                  isFullHeight={true}
+                />
+              </div>
             </div>
             
             {/* Regular races - right side */}
-            <div className="lg:w-2/3">
-              <div className="grid grid-cols-2 xl:grid-cols-3 gap-4 h-full">
+            <div className="lg:w-3/4">
+              <div className="grid grid-cols-3 gap-4 h-full">
                 {regularRaces.map((race) => (
                   <div key={race.id}>
                     <RaceCard 
