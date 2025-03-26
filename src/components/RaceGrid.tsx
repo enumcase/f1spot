@@ -14,63 +14,27 @@ export default function RaceGrid({ title, races, showFeatured = false }: RaceGri
   if (!races.length) return null;
   
   // Memoize the featured race and regular races to avoid recalculating on every render
-  const { featuredRace, regularRaces } = useMemo(() => {
+  const { featuredRace, regularRaces, remainingRaces } = useMemo(() => {
     if (!showFeatured) {
-      return { featuredRace: null, regularRaces: races };
+      return { featuredRace: null, regularRaces: [], remainingRaces: races };
     }
+
+    // Take first race as featured
+    const featured = races[0];
+    
+    // Take next 6 races for the top grid (or fewer if not enough races)
+    const topGridCount = Math.min(6, races.length - 1);
+    const topGrid = races.slice(1, 1 + topGridCount);
+    
+    // All remaining races go to the bottom grid
+    const remaining = races.slice(1 + topGridCount);
+    
     return {
-      featuredRace: races[0],
-      regularRaces: races.slice(1)
+      featuredRace: featured,
+      regularRaces: topGrid,
+      remainingRaces: remaining
     };
   }, [races, showFeatured]);
-  
-  // Function to compute a grid template that gives us column-first ordering
-  const getGridTemplateAreas = (itemCount: number, columns: number) => {
-    const rows = Math.ceil(itemCount / columns);
-    
-    // Create a matrix of area names
-    const areas = Array(rows).fill(0).map(() => Array(columns).fill('.'));
-    
-    // Fill in the areas with positions in column-first order
-    let count = 0;
-    for (let col = 0; col < columns; col++) {
-      for (let row = 0; row < rows; row++) {
-        if (count < itemCount) {
-          areas[row][col] = `item${count}`;
-          count++;
-        }
-      }
-    }
-    
-    // Convert to grid-template-areas format
-    return areas.map(row => `"${row.join(' ')}"`).join(' ');
-  };
-  
-  // Compute grid style for the upcoming races grid
-  const upcomingGridStyle = useMemo(() => {
-    if (!showFeatured || regularRaces.length === 0) return {};
-    
-    const columns = 3; // md:grid-cols-3
-    const templateAreas = getGridTemplateAreas(regularRaces.length, columns);
-    
-    return {
-      gridTemplateAreas: templateAreas,
-      gridTemplateColumns: 'repeat(3, minmax(0, 1fr))'
-    };
-  }, [regularRaces.length, showFeatured]);
-  
-  // Generate styles for each race card in the upcoming races grid
-  const getRaceCardStyle = (index: number) => {
-    return { gridArea: `item${index}` };
-  };
-  
-  const allRacesList = useMemo(() => {
-    return races.map((race) => (
-      <div key={race.id}>
-        <RaceCard race={race} />
-      </div>
-    ));
-  }, [races]);
   
   return (
     <section className="mb-8 md:mb-12">
@@ -81,37 +45,47 @@ export default function RaceGrid({ title, races, showFeatured = false }: RaceGri
       )}
       
       {showFeatured && featuredRace ? (
-        <div className="max-w-5xl">
-          {/* Use a flex layout to ensure equal heights */}
-          <div className="flex flex-col md:flex-row gap-3 md:gap-4">
-            {/* Featured race on the left - takes full height on desktop */}
-            <div className="md:w-1/4 aspect-square md:aspect-auto">
-              <div className="h-full">
-                <RaceCard race={featuredRace} isLarge={true} isFullHeight={true} />
-              </div>
+        <div>
+          {/* All races in a unified grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 grid-flow-dense">
+            {/* Featured race spanning 2 rows */}
+            <div className="row-span-2 h-full">
+              <RaceCard 
+                race={featuredRace}
+                isLarge={true}
+                isFullHeight={true}
+              />
             </div>
             
-            {/* Grid of other upcoming races on the right */}
-            <div className="md:w-3/4">
-              <div 
-                className="grid gap-3 md:gap-4" 
-                style={upcomingGridStyle}
-              >
-                {regularRaces.map((race, index) => (
-                  <div key={race.id} style={getRaceCardStyle(index)}>
-                    <RaceCard race={race} />
-                  </div>
-                ))}
+            {/* Regular races */}
+            {regularRaces.map((race) => (
+              <div key={race.id}>
+                <RaceCard 
+                  race={race}
+                />
               </div>
-            </div>
+            ))}
+            
+            {/* Remaining races */}
+            {remainingRaces.map((race) => (
+              <div key={race.id}>
+                <RaceCard 
+                  race={race}
+                />
+              </div>
+            ))}
           </div>
         </div>
       ) : (
         // Standard grid layout for past races
-        <div className="max-w-5xl">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
-            {allRacesList}
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {races.map((race) => (
+            <div key={race.id}>
+              <RaceCard 
+                race={race}
+              />
+            </div>
+          ))}
         </div>
       )}
     </section>
