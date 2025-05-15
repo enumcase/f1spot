@@ -15,7 +15,7 @@ export default function SeatAreaCard({ seatArea }: SeatAreaCardProps) {
   // For now, let's assume a standard card style for all.
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl ring-1 ring-slate-900/5">
+    <div className="bg-slate-50 dark:bg-slate-800 rounded-xl shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden transition-all hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-600">
       {/* Image Carousel Section (Optional, could be simplified for a card) */}
       {seatArea.viewImages && seatArea.viewImages.length > 0 && (
         <div className="relative aspect-video bg-slate-200 dark:bg-slate-700">
