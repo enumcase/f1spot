@@ -60,7 +60,7 @@ export default function RaceCard({ race, isLarge = false, isFullHeight = false, 
   
   return (
     <Link 
-      href={`/gps/${race.id.replace(/-\d{4}$/, '')}`}
+      href={`/gps/${race.id}`}
       className="block w-full h-full focus-ring"
       aria-label={`View details for ${race.title} race`}
     >
