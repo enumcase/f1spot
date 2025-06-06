@@ -1,3 +1,5 @@
+import {azerbaijanCircuitData} from "@/lib/data/circuits/azerbaijan";
+
 export interface SeatArea {
   id: string;
   name: string;
@@ -55,6 +57,7 @@ registerCircuit(canadaCircuitData);
 registerCircuit(austriaCircuitData);
 registerCircuit(britainCircuitData);
 registerCircuit(belgiumCircuitData);
+registerCircuit(azerbaijanCircuitData);
 
 // --- Data Access Functions ---
 
