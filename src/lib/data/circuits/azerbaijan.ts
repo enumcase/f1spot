@@ -175,7 +175,6 @@ export const azerbaijanCircuitData: Circuit = {
                 'Consider if the historic setting adds value for you'
             ],
         },
-
         {
             id: 'icheri-sheher-grandstand',
             name: 'Icheri Sheher Grandstand',
