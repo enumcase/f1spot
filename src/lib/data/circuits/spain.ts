@@ -1,4 +1,5 @@
 import { Circuit } from '../circuits';
+import { getCircuitMapUrl } from '../../imageUtils';
 
 
 
@@ -11,7 +12,7 @@ import { Circuit } from '../circuits';
 export const spainCircuitData: Circuit = {
   id: 'spain-gp',
   name: 'Spanish Grand Prix',
-  mapImage: '/images/circuits/maps/spain-map-placeholder.png',
+  mapImage: getCircuitMapUrl('spain-map.png'),
   seatAreas: [
     // {
     //   id: 'main-grandstand',
