@@ -1,4 +1,5 @@
 import {Circuit} from "@/lib/data/circuits";
+import { getCircuitMapUrl } from '../../imageUtils';
 
 
 // https://www.koobit.com/azerbaijan-grand-prix-e13868/tickets/filarmoniya-grandstand-75927
@@ -7,7 +8,7 @@ import {Circuit} from "@/lib/data/circuits";
 export const azerbaijanCircuitData: Circuit = {
     id: 'azerbaijan-gp',
     name: 'Azerbaijan Grand Prix',
-    mapImage: '/images/circuits/maps/belgium-map-placeholder.png',
+    mapImage: getCircuitMapUrl('azerbaijan-map.png'),
     seatAreas: [
         {
             id: 'absheron-grandstand',
