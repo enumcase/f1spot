@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { SeatArea } from '@/lib/data/circuits';
 
@@ -22,25 +22,133 @@ const ChevronUpIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+// Arrow Icons for navigation
+const ChevronLeftIcon = ({ className }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+  </svg>
+);
+
+const ChevronRightIcon = ({ className }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+  </svg>
+);
+
 export default function SeatAreaCard({ seatArea }: SeatAreaCardProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [currentX, setCurrentX] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
-  // Determine if the card should have a slightly different style if it's, for example, a premium area
-  // For now, let's assume a standard card style for all.
+  const nextImage = () => {
+    if (seatArea.viewImages && seatArea.viewImages.length > 1) {
+      setActiveImageIndex((prev) => (prev + 1) % seatArea.viewImages.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (seatArea.viewImages && seatArea.viewImages.length > 1) {
+      setActiveImageIndex((prev) => (prev - 1 + seatArea.viewImages.length) % seatArea.viewImages.length);
+    }
+  };
+
+  // Touch and mouse event handlers for swipe functionality
+  const handleStart = (clientX: number) => {
+    setIsDragging(true);
+    setStartX(clientX);
+    setCurrentX(clientX);
+  };
+
+  const handleMove = (clientX: number) => {
+    if (!isDragging) return;
+    setCurrentX(clientX);
+  };
+
+  const handleEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    
+    const diffX = currentX - startX;
+    const threshold = 50; // Minimum swipe distance
+    
+    if (Math.abs(diffX) > threshold) {
+      if (diffX > 0) {
+        prevImage();
+      } else {
+        nextImage();
+      }
+    }
+  };
+
+  // Mouse events
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    handleStart(e.clientX);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    handleMove(e.clientX);
+  };
+
+  const handleMouseUp = () => {
+    handleEnd();
+  };
+
+  const handleMouseLeave = () => {
+    handleEnd();
+  };
+
+  // Touch events
+  const handleTouchStart = (e: React.TouchEvent) => {
+    handleStart(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    handleMove(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    handleEnd();
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        prevImage();
+      } else if (e.key === 'ArrowRight') {
+        nextImage();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <div className="bg-slate-50 dark:bg-slate-800 rounded-xl shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden transition-all hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-600">
-      {/* Image Carousel Section (Optional, could be simplified for a card) */}
+      {/* Image Carousel Section */}
       {seatArea.viewImages && seatArea.viewImages.length > 0 && (
-        <div className="relative aspect-video bg-slate-200 dark:bg-slate-700">
+        <div 
+          ref={carouselRef}
+          className="relative aspect-video bg-slate-200 dark:bg-slate-700 cursor-grab active:cursor-grabbing select-none"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <Image 
             src={seatArea.viewImages[activeImageIndex]}
             alt={`View from ${seatArea.name}`}
             fill
-            className="object-cover"
+            className="object-cover transition-opacity duration-300"
             onError={(e) => { 
-              // Attempt to hide the image and show placeholder text or a default image
               const parent = e.currentTarget.parentElement;
               if (parent) {
                 const placeholder = parent.querySelector('.image-placeholder');
@@ -48,27 +156,67 @@ export default function SeatAreaCard({ seatArea }: SeatAreaCardProps) {
               }
               e.currentTarget.style.display = 'none'; 
             }}
+            draggable={false}
           />
           <div className="image-placeholder absolute inset-0 flex items-center justify-center text-slate-500 dark:text-slate-400" style={{ display: 'none' }}>
             No view image
           </div>
+          
+          {/* Navigation arrows for desktop */}
           {seatArea.viewImages.length > 1 && (
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-              {seatArea.viewImages.map((_, index) => (
-                <button 
-                  key={index}
-                  className={`w-2 h-2 rounded-full transition-colors ${ 
-                    index === activeImageIndex 
-                      ? 'bg-rose-500 scale-125' 
-                      : 'bg-white/70 hover:bg-white'
-                  }`}
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent card click or other parent events
-                    setActiveImageIndex(index);
-                  }}
-                  aria-label={`View image ${index + 1}`}
-                />
-              ))}
+            <>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevImage();
+                }}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-all opacity-0 hover:opacity-100 group-hover:opacity-100 z-20"
+                aria-label="Previous image"
+              >
+                <ChevronLeftIcon className="w-4 h-4" />
+              </button>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextImage();
+                }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-all opacity-0 hover:opacity-100 group-hover:opacity-100 z-20"
+                aria-label="Next image"
+              >
+                <ChevronRightIcon className="w-4 h-4" />
+              </button>
+            </>
+          )}
+          
+          {/* Improved dots with better visibility */}
+          {seatArea.viewImages.length > 1 && (
+            <div className="absolute bottom-0 left-0 right-0 z-10">
+              {/* Shadow overlay for better dot visibility */}
+              <div className="bg-gradient-to-t from-black/50 via-black/20 to-transparent h-16 w-full"></div>
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                {seatArea.viewImages.map((_, index) => (
+                  <button 
+                    key={index}
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-200 border border-white/30 ${ 
+                      index === activeImageIndex 
+                        ? 'bg-white scale-110 shadow-lg' 
+                        : 'bg-white/60 hover:bg-white/80 hover:scale-105'
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveImageIndex(index);
+                    }}
+                    aria-label={`View image ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Swipe indicator */}
+          {seatArea.viewImages.length > 1 && (
+            <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">
+              {activeImageIndex + 1} / {seatArea.viewImages.length}
             </div>
           )}
         </div>
