@@ -40,7 +40,7 @@ const nextConfig = {
   env: {
     SITE_URL: process.env.SITE_URL || 'http://localhost:3000',
   },
-  // Handle redirects from www to non-www
+  // Handle redirects from non-www to www
   async redirects() {
     return [
       {
@@ -48,10 +48,10 @@ const nextConfig = {
         has: [
           {
             type: 'host',
-            value: 'www.f1spot.com',
+            value: 'f1spot.com',
           },
         ],
-        destination: 'https://f1spot.com/:path*',
+        destination: 'https://www.f1spot.com/:path*',
         permanent: true,
       },
     ];
