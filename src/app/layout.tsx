@@ -9,6 +9,13 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'f1spot - Formula 1 seating arrangements, race schedules, and more',
   description: 'Keep track of Formula 1 races with f1spot - your F1 information website.',
+  icons: {
+    icon: [
+      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon', sizes: '32x32', type: 'image/png' }
+    ],
+    apple: '/apple-icon.png',
+  },
 };
 
 export default function RootLayout({
