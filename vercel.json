@@ -11,10 +11,10 @@
       "has": [
         {
           "type": "host",
-          "value": "f1spot.com"
+          "value": "www.f1spot.com"
         }
       ],
-      "destination": "https://www.f1spot.com/:path*",
+      "destination": "https://f1spot.com/:path*",
       "permanent": true
     }
   ],
