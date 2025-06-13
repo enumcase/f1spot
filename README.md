@@ -3,7 +3,7 @@
 
 - View upcoming and past F1 races
 - Get information about race dates, times, and locations
-- Interactive circuit maps with detailed seating information 
+- ~~Interactive circuit maps with detailed seating information~~(to be done after initial MVP launch)
 (coming soon)
 - Comprehensive guides for attending each Grand Prix (coming soon)
 
