@@ -161,7 +161,7 @@ export const races: Race[] = [
     imageUrl: getCircuitImageUrl('singapore.jpg'),
   },
   {
-    id: 'us-gp',
+    id: 'us-cota-gp',
     title: 'United States GP',
     location: 'Austin',
     timestamp: createRaceTimestamp(2025, 10, 19, 14, 0), // ROUND 19: Oct 17-19

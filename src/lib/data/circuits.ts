@@ -35,6 +35,7 @@ import { canadaCircuitData } from './circuits/canada';
 import { austriaCircuitData } from './circuits/austria';
 import { britainCircuitData } from './circuits/britain';
 import { belgiumCircuitData } from './circuits/belgium';
+import { usCotaCircuitData } from "./circuits/us.cota";
 
 // --- Data Management ---
 
@@ -58,6 +59,7 @@ registerCircuit(austriaCircuitData);
 registerCircuit(britainCircuitData);
 registerCircuit(belgiumCircuitData);
 registerCircuit(azerbaijanCircuitData);
+registerCircuit(usCotaCircuitData);
 
 // --- Data Access Functions ---
 
