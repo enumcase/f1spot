@@ -1,4 +1,12 @@
-import {azerbaijanCircuitData} from "@/lib/data/circuits/azerbaijan";
+import {azerbaijanCircuitData} from "./circuits/azerbaijan";
+import { monacoCircuitData } from './circuits/monaco';
+import { spainCircuitData } from './circuits/spain';
+import { canadaCircuitData } from './circuits/canada';
+import { austriaCircuitData } from './circuits/austria';
+import { britainCircuitData } from './circuits/britain';
+import { belgiumCircuitData } from './circuits/belgium';
+import { usCotaCircuitData } from "./circuits/us.cota";
+import { singaporeCircuitData } from "./circuits/singapore";
 
 export interface SeatArea {
   id: string;
@@ -27,18 +35,6 @@ export interface Circuit {
   // e.g., country, length, number of turns, first GP year etc.
 }
 
-// Import data from individual circuit files
-// import { singaporeCircuitData } from './circuits/singapore'; // Removed
-import { monacoCircuitData } from './circuits/monaco';
-import { spainCircuitData } from './circuits/spain';
-import { canadaCircuitData } from './circuits/canada';
-import { austriaCircuitData } from './circuits/austria';
-import { britainCircuitData } from './circuits/britain';
-import { belgiumCircuitData } from './circuits/belgium';
-import { usCotaCircuitData } from "./circuits/us.cota";
-
-// --- Data Management ---
-
 // A map to hold all circuit data, keyed by their base ID
 const allCircuitsData: Map<string, Circuit> = new Map();
 
@@ -60,6 +56,7 @@ registerCircuit(britainCircuitData);
 registerCircuit(belgiumCircuitData);
 registerCircuit(azerbaijanCircuitData);
 registerCircuit(usCotaCircuitData);
+registerCircuit(singaporeCircuitData);
 
 // --- Data Access Functions ---
 
