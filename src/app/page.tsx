@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Header from '@/components/Header';
 import RaceGrid from '@/components/RaceGrid';
+import ComingSoonSection from '@/components/ComingSoonSection';
 import { Race, getUpcomingRaces, getPastRaces } from '@/lib/data/races';
 
 export default function HomePage() {
@@ -55,6 +56,9 @@ export default function HomePage() {
                 races={pastRaces} 
               />
             )}
+            
+            {/* Coming Soon Section */}
+            <ComingSoonSection />
           </>
         )}
       </div>

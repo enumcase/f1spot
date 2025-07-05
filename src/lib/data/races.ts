@@ -32,8 +32,15 @@ export function formatRaceTime(timestamp: number): string {
   return new Date(timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
+// Circuits with full data that should be shown
+const CIRCUITS_WITH_FULL_DATA = [
+  'singapore-gp',
+  'azerbaijan-gp', 
+  'us-cota-gp'
+];
+
 // Official 2025 F1 race calendar data
-export const races: Race[] = [
+const allRaces: Race[] = [
   {
     id: 'australia-gp',
     title: 'Australian GP',
@@ -201,8 +208,13 @@ export const races: Race[] = [
     location: 'Yas Marina',
     timestamp: createRaceTimestamp(2025, 12, 7, 17, 0), // ROUND 24: Dec 5-7
     imageUrl: getCircuitImageUrl('abu_dhabi.jpg'),
-  }
+  },
 ];
+
+// Filter races to only show those with full circuit data
+export const races: Race[] = allRaces.filter(race => 
+  CIRCUITS_WITH_FULL_DATA.includes(race.id)
+);
 
 // Set isPast property based on timestamp comparison
 races.forEach(race => {
