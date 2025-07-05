@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { SeatArea } from '@/lib/data/circuits';
 
@@ -41,6 +41,8 @@ export default function SeatAreaCard({ seatArea }: SeatAreaCardProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [currentX, setCurrentX] = useState(0);
+  const [loadedImages, setLoadedImages] = useState<number[]>([]);
+  const [imageErrors, setImageErrors] = useState<number[]>([]);
   const carouselRef = useRef<HTMLDivElement>(null);
 
   const nextImage = () => {
@@ -54,6 +56,28 @@ export default function SeatAreaCard({ seatArea }: SeatAreaCardProps) {
       setActiveImageIndex((prev) => (prev - 1 + seatArea.viewImages.length) % seatArea.viewImages.length);
     }
   };
+
+  // Handle image load success
+  const handleImageLoad = useCallback((index: number) => {
+    setLoadedImages(prev => prev.includes(index) ? prev : [...prev, index]);
+  }, []);
+
+  // Handle image load error
+  const handleImageError = useCallback((index: number) => {
+    setImageErrors(prev => prev.includes(index) ? prev : [...prev, index]);
+  }, []);
+
+  // Preload images effect
+  useEffect(() => {
+    if (seatArea.viewImages && seatArea.viewImages.length > 0) {
+      seatArea.viewImages.forEach((src, index) => {
+        const img = document.createElement('img');
+        img.onload = () => handleImageLoad(index);
+        img.onerror = () => handleImageError(index);
+        img.src = src;
+      });
+    }
+  }, [seatArea.viewImages, handleImageLoad, handleImageError]);
 
   // Touch and mouse event handlers for swipe functionality
   const handleStart = (clientX: number) => {
@@ -143,24 +167,34 @@ export default function SeatAreaCard({ seatArea }: SeatAreaCardProps) {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <Image 
-            src={seatArea.viewImages[activeImageIndex]}
-            alt={`View from ${seatArea.name}`}
-            fill
-            className="object-cover transition-opacity duration-300"
-            onError={(e) => { 
-              const parent = e.currentTarget.parentElement;
-              if (parent) {
-                const placeholder = parent.querySelector('.image-placeholder');
-                if (placeholder) (placeholder as HTMLElement).style.display = 'flex';
-              }
-              e.currentTarget.style.display = 'none'; 
-            }}
-            draggable={false}
-          />
-          <div className="image-placeholder absolute inset-0 flex items-center justify-center text-slate-500 dark:text-slate-400" style={{ display: 'none' }}>
-            No view image
-          </div>
+          {/* Loading skeleton */}
+          {!loadedImages.includes(activeImageIndex) && !imageErrors.includes(activeImageIndex) && (
+            <div className="absolute inset-0 bg-gradient-to-br from-rose-50 via-pink-50 to-rose-100 dark:from-rose-950/20 dark:via-pink-950/20 dark:to-rose-900/20 animate-pulse flex items-center justify-center">
+              <div className="w-8 h-8 border-2 border-rose-200 dark:border-rose-800 border-t-rose-500 rounded-full animate-spin"></div>
+            </div>
+          )}
+          
+          {/* Actual image */}
+          {loadedImages.includes(activeImageIndex) && (
+            <Image 
+              src={seatArea.viewImages[activeImageIndex]}
+              alt={`View from ${seatArea.name}`}
+              fill
+              className="object-cover transition-opacity duration-300"
+              draggable={false}
+              priority={activeImageIndex === 0}
+            />
+          )}
+          
+          {/* Error placeholder */}
+          {imageErrors.includes(activeImageIndex) && (
+            <div className="absolute inset-0 flex items-center justify-center text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800">
+              <div className="text-center">
+                <div className="text-2xl mb-2">📷</div>
+                <div className="text-sm">Image unavailable</div>
+              </div>
+            </div>
+          )}
           
           {/* Navigation arrows for desktop */}
           {seatArea.viewImages.length > 1 && (
@@ -170,7 +204,7 @@ export default function SeatAreaCard({ seatArea }: SeatAreaCardProps) {
                   e.stopPropagation();
                   prevImage();
                 }}
-                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-all opacity-0 hover:opacity-100 group-hover:opacity-100 z-20"
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-all opacity-80 hover:opacity-100 z-20"
                 aria-label="Previous image"
               >
                 <ChevronLeftIcon className="w-4 h-4" />
@@ -180,7 +214,7 @@ export default function SeatAreaCard({ seatArea }: SeatAreaCardProps) {
                   e.stopPropagation();
                   nextImage();
                 }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-all opacity-0 hover:opacity-100 group-hover:opacity-100 z-20"
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-all opacity-80 hover:opacity-100 z-20"
                 aria-label="Next image"
               >
                 <ChevronRightIcon className="w-4 h-4" />
