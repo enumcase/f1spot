@@ -33,14 +33,14 @@ export function formatRaceTime(timestamp: number): string {
 }
 
 // Circuits with full data that should be shown
-const CIRCUITS_WITH_FULL_DATA = [
+export const CIRCUITS_WITH_FULL_DATA = [
   'singapore-gp',
   'azerbaijan-gp', 
   'us-cota-gp'
 ];
 
 // Official 2025 F1 race calendar data
-const allRaces: Race[] = [
+export const allRaces: Race[] = [
   {
     id: 'australia-gp',
     title: 'Australian GP',
