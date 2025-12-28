@@ -3,8 +3,12 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import WIPPage from '@/components/WIPPage';
 
 const inter = Inter({ subsets: ['latin'] });
+
+// Set to false when 2026 data is ready to go live
+const SITE_IN_WIP_MODE = true;
 
 export const metadata: Metadata = {
   title: 'f1spot - Formula 1 seating arrangements, race schedules, and more',
@@ -26,12 +30,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {children}
-        <footer className="py-6 border-t border-slate-200 dark:border-slate-800 mt-12">
-          <div className="container mx-auto px-3 sm:px-4 text-center text-sm text-slate-500 dark:text-slate-400">
-            &copy; {new Date().getFullYear()} f1spot. All rights reserved.
-          </div>
-        </footer>
+        {SITE_IN_WIP_MODE ? (
+          <WIPPage />
+        ) : (
+          <>
+            {children}
+            <footer className="py-6 border-t border-slate-200 dark:border-slate-800 mt-12">
+              <div className="container mx-auto px-3 sm:px-4 text-center text-sm text-slate-500 dark:text-slate-400">
+                &copy; {new Date().getFullYear()} f1spot. All rights reserved.
+              </div>
+            </footer>
+          </>
+        )}
         <Analytics />
         <SpeedInsights />
       </body>
